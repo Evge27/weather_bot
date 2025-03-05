@@ -3,8 +3,8 @@ import datetime
 import requests
 from aiogram import Bot, Dispatcher, types
 
-TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
-WEATHER_API_KEY = "YOUR_OPENWEATHER_API_KEY"
+TOKEN = "7568630701:AAFRGxeRjh-kVmpfWs34j6CsNWoxpqIZEuQ"
+WEATHER_API_KEY = "914e7cc21ac51e8250c9a536e56b9a50"
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
