@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import requests
 from aiogram import Bot, Dispatcher, types
-
+from aiogram.utils.markdown import escape_md
 TOKEN = "7568630701:AAFRGxeRjh-kVmpfWs34j6CsNWoxpqIZEuQ"
 WEATHER_API_KEY = "914e7cc21ac51e8250c9a536e56b9a50"
 
@@ -96,7 +96,7 @@ async def start_command(message: types.Message):
     else:
         city = message.text.strip() or DEFAULT_CITY
         weather_info = await get_current_weather(city)
-        await message.reply(weather_info, parse_mode="MarkdownV2")
+        await message.reply(escape_md(weather_info), parse_mode="MarkdownV2")
 
 async def main():
     print("Бот запущен!")
