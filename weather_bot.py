@@ -12,15 +12,22 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 # Хэндлер команды /start
-@dp.message()
-async def start_command(message: types.Message):
-    if message.text == "/start":
-        await message.reply("Привет! Напиши мне название города, и я пришлю сводку погоды")
+@dp.message_handler()
+async def get_weather(message: types.Message):
+    try:
+        response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q=москва&lang=ru&units=metric&appid=your_token")
+        data = response.json()
+        city = data["name"]
+        cur_temp = data["main"]["temp"]
+        humidity = data["main"]["humidity"]
+        pressure = data["main"]["pressure"]
+        wind = data["wind"]["speed"]
 
-async def main():
-    # Запуск поллинга
-    print("Бот запущен!")
-    await dp.start_polling(bot)
+        sunrise_timestamp = datetime.datetime.fromtimestamp(data["sys"]["sunrise"])
+        sunset_timestamp = datetime.datetime.fromtimestamp(data["sys"]["sunset"])
 
-if __name__ == "__main__":
-    asyncio.run(main())
+        # продолжительность дня
+        length_of_the_day = datetime.datetime.fromtimestamp(data["sys"]["sunset"]) -       datetime.datetime.fromtimestamp(data["sys"]["sunrise"])
+
+    except:
+        await message.reply("Проверьте название города!")
