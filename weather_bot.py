@@ -121,11 +121,11 @@ async def send_weekend_forecast():
 async def main():
     print("Бот запущен!")
 
-    # Автоматическая отправка прогноза каждую пятницу в 18:00
-    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=10, minute=0, timezone="Europe/Belgrade")
+    # Автоматическая отправка прогноза каждую пятницу в 9:00
+    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=9, minute=0, timezone="Europe/Belgrade")
 
-    # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert, "cron", hour=9, minute=0, timezone="Europe/Belgrade")
+    # Запускаем задачу каждый день в 08:00
+    scheduler.add_job(check_wind_alert, "cron", hour=8, minute=0, timezone="Europe/Belgrade")
 
     scheduler.start()
     await dp.start_polling(bot)
@@ -134,7 +134,7 @@ async def check_wind_alert():
     weather_data = await get_current_weather()
     wind_speed = float(weather_data.split("\n")[3].split(": ")[1].split(" м/с")[0])
 
-    if wind_speed > 6:
+    if wind_speed > 5:
         alert_message = "🌬 <b>Возможно Кошава!</b> Будьте осторожны!"
         await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
 
