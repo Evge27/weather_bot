@@ -157,8 +157,5 @@ async def check_wind_alert():
                     await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
         
-
-
-
 if __name__ == "__main__":
     asyncio.run(main())
