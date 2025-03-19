@@ -57,7 +57,7 @@ async def get_weather_forecast(day: str, city=CITY):
             if not weekend_forecast:
                 return "❌ Прогноз на выходные не найден."
 
-            forecast_msg = f"🌤 <b>Прогноз на выходные в {CITY}</b>\n\n"
+            forecast_msg = f"🌤 <b>Выходные в {CITY}е</b>\n\n"
             for date, values in weekend_forecast.items():
                 day_name = target_dates[date.weekday()]
                 forecast_msg += f"<b>{day_name} ({date.strftime('%d.%m')}):</b>\n" + "\n".join(values) + "\n\n"
@@ -67,7 +67,7 @@ async def get_weather_forecast(day: str, city=CITY):
         else:
             return "❌ Неверный день прогноза!"
 
-        forecast_msg = f"🌤 <b>Прогноз в {CITY} {title} (09:00, 12:00, 15:00)</b>\n\n"
+        forecast_msg = f"🌤 <b>{CITY} {title} (09:00, 12:00, 15:00)</b>\n\n"
         for forecast in forecast_list:
             dt_txt = forecast["dt_txt"]
             forecast_date = datetime.datetime.strptime(dt_txt, "%Y-%m-%d %H:%M:%S").date()
