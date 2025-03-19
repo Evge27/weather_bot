@@ -156,6 +156,8 @@ async def check_wind_alert():
                     alert_message = f"🌬 <b>Возможно Кошава!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
                     await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
-        
+    except Exception as e:
+        print(f"Ошибка при получении данных о ветре: {e}")
+
 if __name__ == "__main__":
     asyncio.run(main())
