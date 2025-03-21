@@ -166,6 +166,8 @@ async def check_wind_alert_tomorrow():
             # Проверяем, что прогноз относится именно к завтрашнему дню и нужному времени
             if forecast_date == tomorrow and forecast_time in time_intervals:
                 wind_speed = forecast["wind"]["speed"]  # Скорость ветра в м/с
+                alert_message = f"🚨 <b> Работает!</b> 
+                await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
 
                 # Если скорость ветра превышает порог
                 if wind_speed > wind_threshold:
@@ -187,7 +189,7 @@ async def main():
     scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
 
     # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=12, minute=10, timezone="Europe/Belgrade")
+    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=12, minute=20, timezone="Europe/Belgrade")
 
 
     scheduler.start()
