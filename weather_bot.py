@@ -176,7 +176,7 @@ async def check_wind_speed(city=CITY):
             if forecast_date == target_date and forecast_time in ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]:
                 wind_speed = forecast["wind"]["speed"]
 
-                if wind_speed > 2:
+                if wind_speed > 5:
                     wind_exceeds_limit = True
                     weather_desc = forecast["weather"][0]["description"].capitalize()
                     temp = forecast["main"]["temp"]
@@ -199,8 +199,8 @@ async def main():
                       timezone="Europe/Belgrade")
 
     # Проверим сегодня и завтра на превышение скорости ветра
-    scheduler.add_job(check_wind_speed, "cron", hour=15, minute=38, timezone="Europe/Belgrade")
-    scheduler.add_job(check_wind_speed_tomorrow, "cron", hour=15, minute=39, timezone="Europe/Belgrade")
+    scheduler.add_job(check_wind_speed, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
+    scheduler.add_job(check_wind_speed_tomorrow, "cron", hour=7, minute=1, timezone="Europe/Belgrade")
 
     scheduler.start()
     await dp.start_polling(bot)
