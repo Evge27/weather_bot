@@ -187,7 +187,7 @@ async def main():
     scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
 
     # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=12, minute=05, timezone="Europe/Belgrade")
+    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=12, minute=10, timezone="Europe/Belgrade")
 
 
     scheduler.start()
