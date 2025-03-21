@@ -166,7 +166,7 @@ async def check_wind_alert_tomorrow():
             # Проверяем, что прогноз относится именно к завтрашнему дню и нужному времени
             if forecast_date == tomorrow and forecast_time in time_intervals:
                 wind_speed = forecast["wind"]["speed"]  # Скорость ветра в м/с
-                alert_message = f"🚨 <b> Работает!</b> 
+                alert_message = f"🚨 <b> Работает!</b>"
                 await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
 
                 # Если скорость ветра превышает порог
