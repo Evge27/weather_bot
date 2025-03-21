@@ -121,11 +121,15 @@ async def send_weekend_forecast():
 async def main():
     print("Бот запущен!")
 
-    # Автоматическая отправка прогноза каждую пятницу в 9:00
-    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=9, minute=0, timezone="Europe/Belgrade")
+    # Автоматическая отправка прогноза каждую пятницу в 8:00
+    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=8, minute=0, timezone="Europe/Belgrade")
 
-    # Запускаем задачу каждый день в 08:00
-    scheduler.add_job(check_wind_alert, "cron", hour=8, minute=0, timezone="Europe/Belgrade")
+    # Запускаем задачу каждый день в 07:00
+    scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
+
+    # Запускаем задачу каждый день в 07:00
+    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=11, minute=0, timezone="Europe/Belgrade")
+
 
     scheduler.start()
     await dp.start_polling(bot)
@@ -158,6 +162,38 @@ async def check_wind_alert():
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
     except Exception as e:
         print(f"Ошибка при получении данных о ветре: {e}")
+
+async def check_wind_alert_tomorrow():
+    try:
+        # Получаем прогноз погоды на завтра
+        weather_data = await get_weather_forecast("tomorrow")  # Прогноз на завтра
+        forecast_list = weather_data["list"]  # Данные с прогнозами на завтра
+        
+        # Временные интервалы для проверки ветра
+        time_intervals = ["03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]
+        
+        # Пороговое значение для скорости ветра
+        wind_threshold = 3  # Например, 5 м/с
+        
+        # Проверяем прогноз на завтра
+        for forecast in forecast_list:
+            dt_txt = forecast["dt_txt"]  # Время прогноза
+            forecast_date = datetime.datetime.strptime(dt_txt, "%Y-%m-%d %H:%M:%S").date()
+            tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+            forecast_time = dt_txt[11:16]  # Извлекаем только время (например, 03:00)
+
+            # Проверяем, что прогноз относится именно к завтрашнему дню и нужному времени
+            if forecast_date == tomorrow and forecast_time in time_intervals:
+                wind_speed = forecast["wind"]["speed"]  # Скорость ветра в м/с
+
+                # Если скорость ветра превышает порог
+                if wind_speed > wind_threshold:
+                    alert_message = f"🌬 <b>Возможно Кошава завтра!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
+                    await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
+                    return  # Прерываем функцию, если одно из предупреждений уже отправлено
+    except Exception as e:
+        print(f"Ошибка при получении данных о ветре на завтра: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
