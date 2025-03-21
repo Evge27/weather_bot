@@ -115,25 +115,6 @@ async def send_weekend_forecast():
     forecast = await get_weather_forecast("weekend")
     await bot.send_message(CHAT_ID, forecast, parse_mode="HTML")
 
-
-
-
-async def main():
-    print("Бот запущен!")
-
-    # Автоматическая отправка прогноза каждую пятницу в 8:00
-    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=8, minute=0, timezone="Europe/Belgrade")
-
-    # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
-
-    # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=11, minute=30, timezone="Europe/Belgrade")
-
-
-    scheduler.start()
-    await dp.start_polling(bot)
-
 async def check_wind_alert():
     try:
         # Получаем прогноз погоды на несколько дней
@@ -193,6 +174,25 @@ async def check_wind_alert_tomorrow():
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
     except Exception as e:
         print(f"Ошибка при получении данных о ветре на завтра: {e}")
+
+
+
+async def main():
+    print("Бот запущен!")
+
+    # Автоматическая отправка прогноза каждую пятницу в 8:00
+    scheduler.add_job(send_weekend_forecast, "cron", day_of_week="wed,fri", hour=8, minute=0, timezone="Europe/Belgrade")
+
+    # Запускаем задачу каждый день в 07:00
+    scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
+
+    # Запускаем задачу каждый день в 07:00
+    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=12, minute=05, timezone="Europe/Belgrade")
+
+
+    scheduler.start()
+    await dp.start_polling(bot)
+
 
 
 if __name__ == "__main__":
