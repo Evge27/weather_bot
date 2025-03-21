@@ -128,7 +128,7 @@ async def main():
     scheduler.add_job(check_wind_alert, "cron", hour=7, minute=0, timezone="Europe/Belgrade")
 
     # Запускаем задачу каждый день в 07:00
-    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=11, minute=0, timezone="Europe/Belgrade")
+    scheduler.add_job(check_wind_alert_tomorrow, "cron", hour=11, minute=30, timezone="Europe/Belgrade")
 
 
     scheduler.start()
@@ -157,7 +157,7 @@ async def check_wind_alert():
 
                 # Если скорость ветра превышает порог
                 if wind_speed > wind_threshold:
-                    alert_message = f"🌬 <b>🚨 Внимание! Возможно Кошава!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
+                    alert_message = f"🚨 <b> Внимание! Возможно Кошава!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
                     await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
     except Exception as e:
@@ -188,7 +188,7 @@ async def check_wind_alert_tomorrow():
 
                 # Если скорость ветра превышает порог
                 if wind_speed > wind_threshold:
-                    alert_message = f"🌬 <b>🚨 Внимание! Возможно Кошава завтра!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
+                    alert_message = f"🚨 <b> Внимание! Возможно Кошава завтра!</b> Время: {forecast_time}. Скорость ветра: {wind_speed} м/с. Будьте осторожны!"
                     await bot.send_message(CHAT_ID, alert_message, parse_mode="HTML")
                     return  # Прерываем функцию, если одно из предупреждений уже отправлено
     except Exception as e:
