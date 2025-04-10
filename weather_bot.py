@@ -53,7 +53,7 @@ async def get_weather_forecast(day: str, city=CITY):
                     if forecast_date not in weekend_forecast:
                         weekend_forecast[forecast_date] = []
 
-                    weekend_forecast[forecast_date].append(f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}")
+                    weekend_forecast[forecast_date].append(f"{forecast_time} -{temp}°C 🌡 ,{wind_speed} м/с, {weather_desc}")
 
             if not weekend_forecast:
                 return "❌ Прогноз на выходные не найден."
@@ -146,7 +146,7 @@ async def check_wind_speed_tomorrow(city=CITY):
                     forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
 
         if wind_exceeds_limit:
-            forecast_msg = "🚨 Внимание, возможно Кошава!\n" + forecast_msg
+            forecast_msg = "🚨 Внимание, завтра возможно Кошава!\n" + forecast_msg
             await bot.send_message(CHAT_ID, forecast_msg, parse_mode="HTML")
 
     except Exception as e:
@@ -184,7 +184,7 @@ async def check_wind_speed(city=CITY):
                     forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
 
         if wind_exceeds_limit:
-            forecast_msg = "🚨 Внимание, возможно Кошава!\n" + forecast_msg
+            forecast_msg = "🚨 Внимание, сегодня возможно Кошава!\n" + forecast_msg
             await bot.send_message(CHAT_ID, forecast_msg, parse_mode="HTML")
 
     except Exception as e:
