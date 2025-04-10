@@ -47,7 +47,7 @@ async def get_weather_forecast(day: str, city=CITY):
 
                 if forecast_weekday in target_dates and forecast_time in ["09:00", "15:00", "21:00"]:
                     weather_desc = forecast["weather"][0]["description"].capitalize()
-                    temp = forecast["main"]["temp"]
+                    temp = round(forecast["main"]["temp"],1)
                     wind_speed = forecast["wind"]["speed"]
 
                     if forecast_date not in weekend_forecast:
@@ -78,7 +78,7 @@ async def get_weather_forecast(day: str, city=CITY):
 
             if forecast_date == target_date and forecast_time in ["09:00", "15:00", "21:00"]:
                 weather_desc = forecast["weather"][0]["description"].capitalize()
-                temp = forecast["main"]["temp"]
+                temp = round(forecast["main"]["temp"],1)
                 wind_speed = forecast["wind"]["speed"]
 
                 forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
@@ -141,7 +141,7 @@ async def check_wind_speed_tomorrow(city=CITY):
                 if wind_speed > 5:
                     wind_exceeds_limit = True
                     weather_desc = forecast["weather"][0]["description"].capitalize()
-                    temp = forecast["main"]["temp"]
+                    temp = round(forecast["main"]["temp"],1)
 
                     forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
 
@@ -179,7 +179,7 @@ async def check_wind_speed(city=CITY):
                 if wind_speed > 5:
                     wind_exceeds_limit = True
                     weather_desc = forecast["weather"][0]["description"].capitalize()
-                    temp = forecast["main"]["temp"]
+                    temp = round(forecast["main"]["temp"],1)
 
                     forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
 
