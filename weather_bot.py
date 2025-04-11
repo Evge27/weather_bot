@@ -9,6 +9,8 @@ TOKEN = "7568630701:AAFRGxeRjh-kVmpfWs34j6CsNWoxpqIZEuQ"
 CHAT_ID = "5659803420"  # ID чата
 WEATHER_API_KEY = "914e7cc21ac51e8250c9a536e56b9a50"
 CITY = "Белград"
+LAT = 44.49
+LON = 20.28
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -38,7 +40,6 @@ def get_weather_emoji(weather_id: int) -> str:
     else:
         return "🌡"  # По умолчанию
 
-emoji_main = "🌡"  # дефолтное значение
 # Функция для получения погоды по дням
 async def get_weather_forecast(day: str, city=CITY):
     try:
@@ -123,6 +124,34 @@ async def get_weather_forecast(day: str, city=CITY):
         print(f"Ошибка: {e}")
         return "Ошибка получения данных!"
 
+async def get_7_days_forecast():
+    try:
+        # API запрос для получения 7-дневного прогноза
+        url = f"https://api.openweathermap.org/data/3.0/onecall?lat={LAT}&lon={LON}&lang=ru&units=metric&exclude=current,minutely,hourly&appid={WEATHER_API_KEY}"
+        response = requests.get(url)
+        data = response.json()
+
+        if "daily" not in data:
+            return "Не удалось получить данные!"
+
+        daily_forecast = data["daily"]  # Прогноз на каждый день
+        forecast_msg = f"<b>Прогноз погоды на 7 дней в {CITY}</b>\n\n"
+
+        for day_forecast in daily_forecast:
+            date = datetime.datetime.utcfromtimestamp(day_forecast["dt"]).date()  # Получаем дату
+            temp_day = round(day_forecast["temp"]["day"], 1)
+            wind_speed = round(day_forecast["wind_speed"], 1)
+            weather_desc = day_forecast["weather"][0]["description"].capitalize()
+            weather_id = day_forecast["weather"][0]["id"]
+            emoji = get_weather_emoji(weather_id)
+
+            forecast_msg += f"{date} - 🌡 {temp_day}°C, 💨 {wind_speed} м/с, {emoji} {weather_desc}\n"
+
+        return forecast_msg
+
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        return "Ошибка получения данных!"
 
 # Функции обработки команд
 @dp.message()
@@ -136,6 +165,10 @@ async def handle_commands(message: Message):
 
     elif message.text == "/weekend":
         forecast = await get_weather_forecast("weekend")
+        await message.reply(forecast, parse_mode="HTML")
+
+    elif message.text == "/5_days":
+        forecast = await get_7_days_forecast()
         await message.reply(forecast, parse_mode="HTML")
 
     elif message.text == "/start":
