@@ -167,7 +167,7 @@ async def handle_commands(message: Message):
         forecast = await get_weather_forecast("weekend")
         await message.reply(forecast, parse_mode="HTML")
 
-    elif message.text == "/5_days":
+    elif message.text == "/7_days":
         forecast = await get_7_days_forecast()
         await message.reply(forecast, parse_mode="HTML")
 
