@@ -14,7 +14,31 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 scheduler = AsyncIOScheduler()
 
+def get_weather_emoji(weather_id: int) -> str:
+    if 200 <= weather_id < 300:
+        return "⛈"  # Гроза
+    elif 300 <= weather_id < 400:
+        return "🌦"  # Морось
+    elif 500 <= weather_id < 600:
+        return "🌧"  # Дождь
+    elif 600 <= weather_id < 700:
+        return "❄️"  # Снег
+    elif 700 <= weather_id < 800:
+        return "🌫"  # Туман, пыль, дымка🌫
+    elif weather_id == 800:
+        return "☀️"  # Ясно
+    elif weather_id == 801:
+        return "🌤"  # Малооблачно
+    elif weather_id == 802:
+        return "⛅️"  # Переменная облачность
+    elif weather_id == 803:
+        return "🌥"  # Облачно с прояснениями
+    elif weather_id == 804:
+        return "☁️"  # Пасмурно
+    else:
+        return "🌡"  # По умолчанию
 
+emoji_main = "🌡"  # дефолтное значение
 # Функция для получения погоды по дням
 async def get_weather_forecast(day: str, city=CITY):
     try:
@@ -45,20 +69,28 @@ async def get_weather_forecast(day: str, city=CITY):
                 forecast_time = dt_txt[11:16]
                 forecast_weekday = forecast_date.weekday()
 
+                if forecast_weekday in target_dates and forecast_time == "12:00":
+                    weather_id = forecast["weather"][0]["id"]
+                    emoji_main = get_weather_emoji(weather_id)
+
                 if forecast_weekday in target_dates and forecast_time in ["09:00", "15:00", "21:00"]:
                     weather_desc = forecast["weather"][0]["description"].capitalize()
+                    weather_id = forecast["weather"][0]["id"]
+                    emoji = get_weather_emoji(weather_id)
                     temp = round(forecast["main"]["temp"],1)
                     wind_speed = forecast["wind"]["speed"]
 
                     if forecast_date not in weekend_forecast:
                         weekend_forecast[forecast_date] = []
 
-                    weekend_forecast[forecast_date].append(f"{forecast_time} -{temp}°C 🌡 ,{wind_speed} м/с, {weather_desc}")
+                    weekend_forecast[forecast_date].append(f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {emoji}{weather_desc}")
+                    print(weather_id)
+
 
             if not weekend_forecast:
                 return "❌ Прогноз на выходные не найден."
 
-            forecast_msg = f" <b>Выходные в {CITY}</b>\n\n"
+            forecast_msg = f" {emoji_main} <b>Выходные в {CITY}</b>\n\n"
             for date, values in weekend_forecast.items():
                 day_name = target_dates[date.weekday()]
                 forecast_msg += f"<b>{day_name} ({date.strftime('%d.%m')}):</b>\n" + "\n".join(values) + "\n\n"
@@ -68,7 +100,7 @@ async def get_weather_forecast(day: str, city=CITY):
         else:
             return "❌ Неверный день прогноза!"
 
-        forecast_msg = f"🌤 <b>{CITY} {title} (09:00, 15:00, 21:00)</b>\n\n"
+        forecast_msg = f" <b>{CITY} {title} </b>\n\n"
 
         # Ищем данные на 09:00, 12:00, 15:00, 18:00, 21:00
         for forecast in forecast_list:
@@ -78,10 +110,12 @@ async def get_weather_forecast(day: str, city=CITY):
 
             if forecast_date == target_date and forecast_time in ["09:00", "15:00", "21:00"]:
                 weather_desc = forecast["weather"][0]["description"].capitalize()
+                weather_id = forecast["weather"][0]["id"]
+                emoji = get_weather_emoji(weather_id)
                 temp = round(forecast["main"]["temp"],1)
                 wind_speed = forecast["wind"]["speed"]
 
-                forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
+                forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {emoji}{weather_desc}\n"
 
         return forecast_msg
 
@@ -141,12 +175,14 @@ async def check_wind_speed_tomorrow(city=CITY):
                 if wind_speed > 5:
                     wind_exceeds_limit = True
                     weather_desc = forecast["weather"][0]["description"].capitalize()
+                    weather_id = forecast["weather"][0]["id"]
+                    emoji = get_weather_emoji(weather_id)
                     temp = round(forecast["main"]["temp"],1)
 
-                    forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
+                    forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {emoji}{weather_desc}\n"
 
         if wind_exceeds_limit:
-            forecast_msg = "🚨 Внимание, завтра возможно Кошава!\n" + forecast_msg
+            forecast_msg = "🚨 Внимание! Завтра возможно Кошава!\n" + forecast_msg
             await bot.send_message(CHAT_ID, forecast_msg, parse_mode="HTML")
 
     except Exception as e:
@@ -179,12 +215,14 @@ async def check_wind_speed(city=CITY):
                 if wind_speed > 5:
                     wind_exceeds_limit = True
                     weather_desc = forecast["weather"][0]["description"].capitalize()
+                    weather_id = forecast["weather"][0]["id"]
+                    emoji = get_weather_emoji(weather_id)
                     temp = round(forecast["main"]["temp"],1)
 
-                    forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {weather_desc}\n"
+                    forecast_msg += f"{forecast_time} - 🌡 {temp}°C, 💨 {wind_speed} м/с, {emoji}{weather_desc}\n"
 
         if wind_exceeds_limit:
-            forecast_msg = "🚨 Внимание, сегодня возможно Кошава!\n" + forecast_msg
+            forecast_msg = "🚨 Внимание! Сегодня возможно Кошава!\n" + forecast_msg
             await bot.send_message(CHAT_ID, forecast_msg, parse_mode="HTML")
 
     except Exception as e:
